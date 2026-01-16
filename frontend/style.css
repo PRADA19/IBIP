@@ -1,0 +1,202 @@
+:root {
+    --header-bg: #e8aeb7;
+    --page-bg: #fdecef;
+    --container-bg: #fff5f7;
+    --task-bg: #f7c6d0;
+    --task-completed-bg: #c97c8c;
+    --add-btn-bg: #e26a8d;
+    --complete-btn-bg: #b65c6f;
+    --delete-btn-bg: #8f3d4c;
+    --text-color: #4a2c2a;
+    --white-soft: rgba(255, 255, 255, 0.75);
+}
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: var(--page-bg);
+    color: var(--text-color);
+    overflow-x: hidden;
+}
+.app-header {
+    background-color: var(--header-bg);
+    padding: 26px;
+    text-align: center;
+    color: white;
+}
+
+.app-header h1 {
+    margin: 0;
+    font-size: 36px;
+}
+
+.tagline {
+    font-size: 14px;
+    margin-top: 6px;
+    color: var(--white-soft);
+}
+.container {
+    width: 80%;
+    max-width: 650px;
+    margin: 40px auto;
+    background-color: var(--container-bg);
+    padding: 34px;
+    border-radius: 20px;
+    box-shadow: 0 14px 35px rgba(0,0,0,0.12);
+}
+.input-box {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 30px;
+}
+
+input {
+    flex: 1;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid var(--header-bg);
+    font-size: 17px;
+}
+button {
+    background-color: var(--add-btn-bg);
+    color: white;
+    border: none;
+    padding: 16px 24px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+.task-block {
+    width: 100%;
+    background-color: var(--task-bg);
+    padding: 32px;
+    margin-bottom: 24px;
+    border-radius: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 22px;
+    box-shadow: 0 10px 22px rgba(0,0,0,0.12);
+}
+.task-block.completed {
+    background-color: var(--task-completed-bg);
+    color: white;
+}
+.task-text {
+    flex: 1;
+}
+.complete-btn {
+    background-color: var(--complete-btn-bg);
+    color: white;
+    border: none;
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.delete-btn {
+    background-color: var(--delete-btn-bg);
+    color: white;
+    border: none;
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+/* ---------- BACKGROUND LEAVES (VISIBLE) ---------- */
+.bg-decor {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.35);
+    border-radius: 60% 40% 60% 40%;
+    filter: blur(1px);
+    z-index: 1;
+}
+
+/* Leaf positions */
+.leaf-1 {
+    width: 260px;
+    height: 160px;
+    top: 140px;
+    left: 60px;
+}
+
+.leaf-2 {
+    width: 300px;
+    height: 180px;
+    bottom: 120px;
+    right: 80px;
+}
+
+.leaf-3 {
+    width: 220px;
+    height: 140px;
+    top: 360px;
+    right: 260px;
+}
+
+/* Floating animation */
+@keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-14px); }
+    100% { transform: translateY(0); }
+}
+
+.bg-decor {
+    animation: float 7s ease-in-out infinite;
+}
+
+/* Keep content above leaves */
+.app-header,
+.container {
+    position: relative;
+    z-index: 2;
+}
+
+.bg-decor {
+    animation: float 6s ease-in-out infinite;
+}
+.task {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f7c6d0;
+  padding: 15px;
+  margin-bottom: 12px;
+  border-radius: 14px;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+
+.task span {
+  font-size: 18px;
+}
+
+.task-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.completed-btn {
+  background-color: #9b4d57;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.delete-btn {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+
