@@ -26,6 +26,11 @@ const connectDB = async () => {
 };
 
 connectDB();
+//==============render=============
+const path = require("path");
+
+app.use(express.static(path.join(__dirname, "../frontend")));
+
 
 // ================= ROUTES =================
 
