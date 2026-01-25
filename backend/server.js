@@ -1,69 +1,106 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const Task = require('./models/Task');
+// ================= IMPORTS =================
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+require("dotenv").config();
+
+const Task = require("./models/Task");
 
 const app = express();
+
+// ================= MIDDLEWARE =================
 app.use(cors());
 app.use(express.json());
 
-// MongoDB connection (Atlas)
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.log(err));
+// ================= MONGODB CONNECTION =================
+const connectDB = async () => {
+  try {
+    // ✅ Removed deprecated options
+    await mongoose.connect(process.env.MONGO_URI);
 
-// Root route (important for Vercel)
-app.get('/', (req, res) => {
-  res.send('SmartTodo Backend is running 🚀');
+    console.log("✅ MongoDB connected");
+  } catch (err) {
+    console.error("❌ MongoDB connection error:", err.message);
+    process.exit(1);
+  }
+};
+
+connectDB();
+
+// ================= ROUTES =================
+
+// Root route
+app.get("/", (req, res) => {
+  res.send("SmartTodo Backend running 🚀");
 });
 
-// GET all tasks
-app.get('/tasks', async (req, res) => {
+// Get all tasks
+app.get("/tasks", async (req, res) => {
   try {
-    const tasks = await Task.find();
-    res.json(tasks);
+    const tasks = await Task.find().sort({ _id: -1 });
+    res.status(200).json(tasks);
   } catch (err) {
-    res.status(500).json(err);
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch tasks" });
   }
 });
 
-// ADD task
-app.post('/tasks', async (req, res) => {
+// Add a task
+app.post("/tasks", async (req, res) => {
   try {
-    const task = new Task({
-      title: req.body.title,
-      completed: false
+    const { title } = req.body;
+
+    if (!title || title.trim() === "") {
+      return res.status(400).json({ error: "Title is required" });
+    }
+
+    const task = await Task.create({
+      title: title.trim(),
+      completed: false,
     });
-    await task.save();
-    res.json(task);
+
+    res.status(201).json(task);
   } catch (err) {
-    res.status(500).json(err);
+    console.error(err);
+    res.status(500).json({ error: "Failed to add task" });
   }
 });
 
-// MARK completed
-app.put('/tasks/:id', async (req, res) => {
+// Update task
+app.put("/tasks/:id", async (req, res) => {
   try {
-    const updatedTask = await Task.findByIdAndUpdate(
+    const task = await Task.findByIdAndUpdate(
       req.params.id,
-      { completed: true },
+      req.body,
       { new: true }
     );
-    res.json(updatedTask);
+
+    if (!task) return res.status(404).json({ error: "Task not found" });
+
+    res.json(task);
   } catch (err) {
-    res.status(500).json(err);
+    console.error(err);
+    res.status(500).json({ error: "Failed to update task" });
   }
 });
 
-// DELETE task
-app.delete('/tasks/:id', async (req, res) => {
+// Delete task
+app.delete("/tasks/:id", async (req, res) => {
   try {
     await Task.findByIdAndDelete(req.params.id);
     res.json({ message: "Task deleted" });
   } catch (err) {
-    res.status(500).json(err);
+    console.error(err);
+    res.status(500).json({ error: "Failed to delete task" });
   }
 });
 
-// IMPORTANT: export app for Vercel
+// ================= SERVER =================
+const PORT = process.env.PORT || 5003;
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
+
+// ================= EXPORT =================
 module.exports = app;

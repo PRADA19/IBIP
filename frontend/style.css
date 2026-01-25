@@ -10,6 +10,7 @@
     --text-color: #4a2c2a;
     --white-soft: rgba(255, 255, 255, 0.75);
 }
+
 body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
@@ -17,11 +18,14 @@ body {
     color: var(--text-color);
     overflow-x: hidden;
 }
+
 .app-header {
     background-color: var(--header-bg);
     padding: 26px;
     text-align: center;
     color: white;
+    position: relative;
+    z-index: 2;
 }
 
 .app-header h1 {
@@ -34,6 +38,7 @@ body {
     margin-top: 6px;
     color: var(--white-soft);
 }
+
 .container {
     width: 80%;
     max-width: 650px;
@@ -42,7 +47,10 @@ body {
     padding: 34px;
     border-radius: 20px;
     box-shadow: 0 14px 35px rgba(0,0,0,0.12);
+    position: relative;
+    z-index: 2;
 }
+
 .input-box {
     display: flex;
     gap: 14px;
@@ -56,6 +64,7 @@ input {
     border: 1px solid var(--header-bg);
     font-size: 17px;
 }
+
 button {
     background-color: var(--add-btn-bg);
     color: white;
@@ -65,50 +74,75 @@ button {
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
+    transition: 0.2s all ease-in-out;
 }
 
 button:hover {
     opacity: 0.9;
 }
-.task-block {
-    width: 100%;
-    background-color: var(--task-bg);
-    padding: 32px;
-    margin-bottom: 24px;
-    border-radius: 20px;
+
+/* ---------- TASK LIST ---------- */
+.task {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 22px;
-    box-shadow: 0 10px 22px rgba(0,0,0,0.12);
+    background-color: var(--task-bg);
+    padding: 15px;
+    margin-bottom: 12px;
+    border-radius: 14px;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+    transition: 0.2s all ease-in-out;
 }
-.task-block.completed {
-    background-color: var(--task-completed-bg);
-    color: white;
-}
-.task-text {
+
+.task span {
     flex: 1;
+    font-size: 18px;
+    margin-right: 12px;
 }
+
+.task.completed span {
+    text-decoration: line-through;
+    color: gray;
+}
+
+/* Task buttons container */
+.task-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+/* Complete button */
 .complete-btn {
     background-color: var(--complete-btn-bg);
     color: white;
     border: none;
-    padding: 14px 24px;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: bold;
+    padding: 8px 14px;
+    border-radius: 8px;
     cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s all ease-in-out;
 }
+
+.complete-btn:hover {
+    background-color: #993b4b; /* slightly darker */
+}
+
+/* Delete button */
 .delete-btn {
     background-color: var(--delete-btn-bg);
     color: white;
     border: none;
-    padding: 14px 24px;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: bold;
+    padding: 8px 14px;
+    border-radius: 8px;
     cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s all ease-in-out;
 }
+
+.delete-btn:hover {
+    background-color: #702d3b; /* slightly darker */
+}
+
 /* ---------- BACKGROUND LEAVES (VISIBLE) ---------- */
 .bg-decor {
     position: absolute;
@@ -116,9 +150,9 @@ button:hover {
     border-radius: 60% 40% 60% 40%;
     filter: blur(1px);
     z-index: 1;
+    animation: float 6s ease-in-out infinite;
 }
 
-/* Leaf positions */
 .leaf-1 {
     width: 260px;
     height: 160px;
@@ -139,64 +173,19 @@ button:hover {
     top: 360px;
     right: 260px;
 }
+/* Blink animation */
+@keyframes blinkAnim {
+  0%, 100% { background-color: rgb(255, 211, 230); }
+  50% { background-color: transparent; }
+}
 
-/* Floating animation */
+.blink {
+  animation: blinkAnim 0.4s linear 2; /* 2 blinks */
+}
+
+
 @keyframes float {
     0% { transform: translateY(0); }
     50% { transform: translateY(-14px); }
     100% { transform: translateY(0); }
 }
-
-.bg-decor {
-    animation: float 7s ease-in-out infinite;
-}
-
-/* Keep content above leaves */
-.app-header,
-.container {
-    position: relative;
-    z-index: 2;
-}
-
-.bg-decor {
-    animation: float 6s ease-in-out infinite;
-}
-.task {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #f7c6d0;
-  padding: 15px;
-  margin-bottom: 12px;
-  border-radius: 14px;
-  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
-}
-
-.task span {
-  font-size: 18px;
-}
-
-.task-buttons {
-  display: flex;
-  gap: 10px;
-}
-
-.completed-btn {
-  background-color: #9b4d57;
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.delete-btn {
-  background-color: #ff4d4d;
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-
