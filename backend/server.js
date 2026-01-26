@@ -3,6 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
+const path = require("path");
 
 const Task = require("./models/Task");
 
@@ -15,9 +16,7 @@ app.use(express.json());
 // ================= MONGODB CONNECTION =================
 const connectDB = async () => {
   try {
-    // ✅ Removed deprecated options
     await mongoose.connect(process.env.MONGO_URI);
-
     console.log("✅ MongoDB connected");
   } catch (err) {
     console.error("❌ MongoDB connection error:", err.message);
@@ -26,11 +25,9 @@ const connectDB = async () => {
 };
 
 connectDB();
-//==============render=============
-const path = require("path");
 
+// ================= FRONTEND SERVING (FOR RENDER) =================
 app.use(express.static(path.join(__dirname, "../frontend")));
-
 
 // ================= ROUTES =================
 
@@ -54,7 +51,6 @@ app.get("/tasks", async (req, res) => {
 app.post("/tasks", async (req, res) => {
   try {
     const { title } = req.body;
-
     if (!title || title.trim() === "") {
       return res.status(400).json({ error: "Title is required" });
     }
@@ -74,11 +70,9 @@ app.post("/tasks", async (req, res) => {
 // Update task
 app.put("/tasks/:id", async (req, res) => {
   try {
-    const task = await Task.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
+    const task = await Task.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
 
     if (!task) return res.status(404).json({ error: "Task not found" });
 
@@ -101,8 +95,7 @@ app.delete("/tasks/:id", async (req, res) => {
 });
 
 // ================= SERVER =================
-const PORT = process.env.PORT || 5003;
-
+const PORT = process.env.PORT || 5000; // Use Render PORT if available
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
