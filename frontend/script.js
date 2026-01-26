@@ -1,3 +1,6 @@
+// ================= BACKEND URL =================
+const API_URL = "https://ibip-nlcj.onrender.com"; // 🔥 YOUR RENDER BACKEND
+
 // ================= SELECT ELEMENTS =================
 const taskInput = document.getElementById("taskInput");
 const taskContainer = document.getElementById("taskContainer");
@@ -7,21 +10,20 @@ const searchBtn = document.getElementById("searchBtn");
 // ================= FETCH AND RENDER TASKS =================
 async function fetchTasks() {
   try {
-    const res = await fetch("http://localhost:5003/tasks");
+    const res = await fetch(`${API_URL}/tasks`);
     if (!res.ok) throw new Error("Failed to fetch tasks");
 
     const tasks = await res.json();
-    taskContainer.innerHTML = ""; // Clear previous tasks
+    taskContainer.innerHTML = "";
 
     tasks.forEach(task => {
       const taskDiv = document.createElement("div");
-      taskDiv.className = "task task-item"; // Added "task-item" class
+      taskDiv.className = "task task-item";
       taskDiv.style.display = "flex";
       taskDiv.style.alignItems = "center";
       taskDiv.style.justifyContent = "space-between";
       taskDiv.style.marginBottom = "10px";
 
-      // Task title
       const title = document.createElement("span");
       title.textContent = task.title;
       title.style.flex = "1";
@@ -29,18 +31,15 @@ async function fetchTasks() {
       title.style.textDecoration = task.completed ? "line-through" : "none";
       title.style.color = task.completed ? "gray" : "black";
 
-      // Complete / Undo button
       const completeBtn = document.createElement("button");
       completeBtn.textContent = task.completed ? "Undo" : "Complete";
       completeBtn.style.marginRight = "5px";
       completeBtn.onclick = () => toggleComplete(task._id, !task.completed);
 
-      // Delete button
       const deleteBtn = document.createElement("button");
       deleteBtn.textContent = "Delete";
       deleteBtn.onclick = () => deleteTask(task._id);
 
-      // Append elements
       taskDiv.appendChild(title);
       taskDiv.appendChild(completeBtn);
       taskDiv.appendChild(deleteBtn);
@@ -58,16 +57,13 @@ async function addTask() {
   if (!title) return alert("Please enter a task");
 
   try {
-    const res = await fetch("http://localhost:5003/tasks", {
+    const res = await fetch(`${API_URL}/tasks`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ title }),
     });
 
-    if (!res.ok) {
-      const errorData = await res.json();
-      return alert(errorData.error || "Failed to add task");
-    }
+    if (!res.ok) throw new Error("Failed to add task");
 
     taskInput.value = "";
     fetchTasks();
@@ -77,10 +73,10 @@ async function addTask() {
   }
 }
 
-// ================= TOGGLE COMPLETE / UNDO =================
+// ================= TOGGLE COMPLETE =================
 async function toggleComplete(id, completed) {
   try {
-    const res = await fetch(`http://localhost:5003/tasks/${id}`, {
+    const res = await fetch(`${API_URL}/tasks/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ completed }),
@@ -97,7 +93,10 @@ async function toggleComplete(id, completed) {
 // ================= DELETE TASK =================
 async function deleteTask(id) {
   try {
-    const res = await fetch(`http://localhost:5003/tasks/${id}`, { method: "DELETE" });
+    const res = await fetch(`${API_URL}/tasks/${id}`, {
+      method: "DELETE",
+    });
+
     if (!res.ok) throw new Error("Failed to delete task");
     fetchTasks();
   } catch (err) {
@@ -115,7 +114,7 @@ searchBtn.addEventListener("click", () => {
   let found = false;
 
   taskElements.forEach(taskEl => {
-    const titleEl = taskEl.querySelector("span"); // only task title
+    const titleEl = taskEl.querySelector("span");
     if (titleEl && titleEl.textContent.trim().toLowerCase() === text) {
       found = true;
       taskEl.classList.add("blink");
@@ -126,11 +125,11 @@ searchBtn.addEventListener("click", () => {
   if (!found) alert("Task not found ❌");
 });
 
-// ================= EVENT LISTENERS =================
+// ================= EVENTS =================
 addBtn.addEventListener("click", addTask);
 taskInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter") addTask();
 });
 
-// ================= INITIAL FETCH =================
+// ================= INITIAL LOAD =================
 fetchTasks();
