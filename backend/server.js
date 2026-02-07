@@ -3,15 +3,16 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
-const path = require("path");
 
 const Task = require("./models/Task");
 
 const app = express();
 
+
 // ================= MIDDLEWARE =================
 app.use(cors());
 app.use(express.json());
+
 
 // ================= MONGODB CONNECTION =================
 const connectDB = async () => {
@@ -26,79 +27,84 @@ const connectDB = async () => {
 
 connectDB();
 
-// ================= FRONTEND SERVING (FOR RENDER) =================
-app.use(express.static(path.join(__dirname, "../frontend")));
 
 // ================= ROUTES =================
 
-// Root route
+// Health check (Render wake-up)
 app.get("/", (req, res) => {
-  res.send("SmartTodo Backend running 🚀");
+  res.send("🚀 SmartTodo Backend running");
 });
 
-// Get all tasks
+
+// ================= TASK ROUTES =================
+
+// GET all tasks
 app.get("/tasks", async (req, res) => {
   try {
     const tasks = await Task.find().sort({ _id: -1 });
-    res.status(200).json(tasks);
+    res.json(tasks);
   } catch (err) {
-    console.error(err);
     res.status(500).json({ error: "Failed to fetch tasks" });
   }
 });
 
-// Add a task
+
+// POST new task
 app.post("/tasks", async (req, res) => {
   try {
     const { title } = req.body;
-    if (!title || title.trim() === "") {
-      return res.status(400).json({ error: "Title is required" });
+
+    if (!title?.trim()) {
+      return res.status(400).json({ error: "Title required" });
     }
 
     const task = await Task.create({
       title: title.trim(),
-      completed: false,
+      completed: false
     });
 
     res.status(201).json(task);
-  } catch (err) {
-    console.error(err);
+
+  } catch {
     res.status(500).json({ error: "Failed to add task" });
   }
 });
 
-// Update task
+
+// PUT update task
 app.put("/tasks/:id", async (req, res) => {
   try {
-    const task = await Task.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
+    const task = await Task.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
 
-    if (!task) return res.status(404).json({ error: "Task not found" });
+    if (!task) return res.status(404).json({ error: "Not found" });
 
     res.json(task);
-  } catch (err) {
-    console.error(err);
+
+  } catch {
     res.status(500).json({ error: "Failed to update task" });
   }
 });
 
-// Delete task
+
+// DELETE task
 app.delete("/tasks/:id", async (req, res) => {
   try {
     await Task.findByIdAndDelete(req.params.id);
-    res.json({ message: "Task deleted" });
-  } catch (err) {
-    console.error(err);
+    res.json({ message: "Deleted" });
+
+  } catch {
     res.status(500).json({ error: "Failed to delete task" });
   }
 });
 
+
 // ================= SERVER =================
-const PORT = process.env.PORT || 5000; // Use Render PORT if available
+const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
-
-// ================= EXPORT =================
-module.exports = app;
